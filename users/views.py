@@ -1,10 +1,11 @@
 from django.shortcuts import redirect, render
-from django.contrib.auth.decorators import login_required 
+from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.views import PasswordResetView, LogoutView
 from django.views import View
 from django.contrib.auth import authenticate, login
+from django.utils.decorators import method_decorator
 
 from .forms import CustomUserCreationForm, LoginForm
 
@@ -48,5 +49,14 @@ class CustomPasswordResetView(PasswordResetView):
 
 @login_required
 def profile(request: HttpRequest) -> HttpResponse:
-    return render(request, 'users/profile.html')
+    user = request.user
+    tasks = user.tasks.all()
+    return render(request, 'users/profile.html', {"user": user, "tasks": tasks})
 
+@method_decorator(login_required, name="dispatch")
+class CreateTaskView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        pass
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        pass
